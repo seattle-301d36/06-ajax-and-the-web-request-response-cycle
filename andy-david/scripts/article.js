@@ -1,6 +1,6 @@
 'use strict';
 
-function Article (rawDataObj) {
+function Article(rawDataObj) {
   this.author = rawDataObj.author;
   this.authorUrl = rawDataObj.authorUrl;
   this.title = rawDataObj.title;
@@ -13,15 +13,15 @@ function Article (rawDataObj) {
 Article.all = [];
 
 // COMMENT: Why isn't this method written as an arrow function?
-// PUT YOUR RESPONSE HERE
-Article.prototype.toHtml = function() {
+// Because it uses contextual this.
+Article.prototype.toHtml = function () {
   let template = Handlebars.compile($('#article-template').text());
 
-  this.daysAgo = parseInt((new Date() - new Date(this.publishedOn))/60/60/24/1000);
+  this.daysAgo = parseInt((new Date() - new Date(this.publishedOn)) / 60 / 60 / 24 / 1000);
 
   // COMMENT: What is going on in the line below? What do the question mark and colon represent? How have we seen this same logic represented previously?
   // Not sure? Check the docs!
-  // PUT YOUR RESPONSE HERE
+  // This is a ternary operator. It's equivalent to if else.
   this.publishStatus = this.publishedOn ? `published ${this.daysAgo} days ago` : '(draft)';
   this.body = marked(this.body);
 
@@ -33,44 +33,40 @@ Article.prototype.toHtml = function() {
 // REVIEW: This function will take the rawData, how ever it is provided, and use it to instantiate all the articles. This code is moved from elsewhere, and encapsulated in a simply-named function for clarity.
 
 // COMMENT: Where is this function called? What does 'rawData' represent now? How is this different from previous labs?
-// PUT YOUR RESPONSE HERE
+// It's called from fetch all, which is called on page load/refresh. rawData represents article data. It's
+// represented in JSON file, or in localStorage. In the previous labs, the article data was contained in a
+// JavaScript data file.
 Article.loadAll = articleData => {
-  articleData.sort((a,b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)))
+  articleData.sort((a, b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)));
 
-  articleData.forEach(articleObject => Article.all.push(new Article(articleObject)))
-}
+  articleData.forEach(articleObject => Article.all.push(new Article(articleObject)))};
 
 // REVIEW: This function will retrieve the data from either a local or remote source, and process it, then hand off control to the View.
+// COMMENT: sequence; checks if there is article data in localStorage, if not, it uses a web request
+// to grab it from the JSON data file.
 Article.fetchAll = () => {
   // REVIEW: What is this 'if' statement checking for? Where was the rawData set to local storage?
   if (localStorage.rawData) {
-
-    Article.loadAll(localStorage.rawData);
+    Article.loadAll(JSON.parse(localStorage.rawData));
+    articleView.initIndexPage();
 
   } else {
     const xhr = new XMLHttpRequest();
-    // xhr.open('GET', 'data/hackeripsum.json', true);
-    // xhr.send(null);
     xhr.onload = () => {
       if (xhr.status === 200) {
         let responseObject = JSON.parse(xhr.responseText);
         Article.loadAll(responseObject);
+        articleView.initIndexPage();
+        localStorage.rawData = JSON.stringify(responseObject);
       }
-    }
+    };
 
     xhr.open('GET', 'data/hackeripsum.json', true);
     xhr.send(null);
-
-
   }
-}
 
-$(document).ready(function(){
+};
+
+$(document).ready(function () {
   Article.fetchAll();
-  // console.log(Article.all);
-  for(let i=0; i < Article.all.length; i++) {
-    console.log('hi');
-    $('#articles').append(Article.all[i].toHtml());
-  }
-
-})
+});
