@@ -34,31 +34,25 @@ Article.prototype.toHtml = function() {
 
 // COMMENT: Where is this function called? What does 'rawData' represent now? How is this different from previous labs?
 // PUT YOUR RESPONSE HERE
-Article.loadAll = articleData => {
-  articleData.sort((a,b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)))
-
-  articleData.forEach(articleObject => Article.all.push(new Article(articleObject)))
-}
-
-// REVIEW: This function will retrieve the data from either a local or remote source, and process it, then hand off control to the View.
 Article.fetchAll = () => {
   // REVIEW: What is this 'if' statement checking for? Where was the rawData set to local storage?
   if (localStorage.rawData) {
-
-    Article.loadAll();
+    
+    Article.loadAll(JSON.parse(localStorage.rawData)); //get out of local data and parse
+    articleView.initIndexPage();
 
   } else {
     $.getJSON('../data/hackerIpsum.json')
       .then((data) => {
-        localStorage.setItem('rawData', JSON.stringify(rawData));
-        for(let rawData in data) {
-          let newArticle = new Article();
-        }
+
+        localStorage.setItem('rawData', JSON.stringify(data));
+        Article.loadAll(data)
+        articleView.initIndexPage();
+
       })
       .fail((error) => {
         console.log(error);
       });
   }
-}
 
 Article.fetchAll();
