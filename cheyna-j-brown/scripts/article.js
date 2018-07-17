@@ -48,16 +48,6 @@ Article.fetchAll = () => {
     Article.loadAll();
 
   } else {
-    $.getJSON('../data/hackerIpsum.json')
-      .then((data) => {
-        for(let articleIndex in data) {
-          let newArticle = new Article();
-        }
-      })
-      .fail((error) => {
-        console.log(error);
-      });
+
   }
 }
-
-Article.fetchAll();
