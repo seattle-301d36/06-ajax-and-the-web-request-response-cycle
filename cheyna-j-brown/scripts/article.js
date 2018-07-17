@@ -13,7 +13,7 @@ function Article (rawDataObj) {
 Article.all = [];
 
 // COMMENT: Why isn't this method written as an arrow function?
-// PUT YOUR RESPONSE HERE
+// This is not written as a arrow function as this is a constructor. Arrow functions do not work in functions where (this) is used 
 Article.prototype.toHtml = function() {
   let template = Handlebars.compile($('#article-template').text());
 
@@ -21,7 +21,8 @@ Article.prototype.toHtml = function() {
 
   // COMMENT: What is going on in the line below? What do the question mark and colon represent? How have we seen this same logic represented previously?
   // Not sure? Check the docs!
-  // PUT YOUR RESPONSE HERE
+  // The question mark and following : are part of a ternary operator. This is the same as an if/else statement.
+  // This line checks to see if there is a published on value to set `published ${this.daysAgo} days ago`if there is and draft if there is not
   this.publishStatus = this.publishedOn ? `published ${this.daysAgo} days ago` : '(draft)';
   this.body = marked(this.body);
 
@@ -33,20 +34,26 @@ Article.prototype.toHtml = function() {
 // REVIEW: This function will take the rawData, how ever it is provided, and use it to instantiate all the articles. This code is moved from elsewhere, and encapsulated in a simply-named function for clarity.
 
 // COMMENT: Where is this function called? What does 'rawData' represent now? How is this different from previous labs?
-// This is an arrow function
-Article.loadAll = articleData => {
-  articleData.sort((a,b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)))
-
-  articleData.forEach(articleObject => Article.all.push(new Article(articleObject)))
-}
-
-// REVIEW: This function will retrieve the data from either a local or remote source, and process it, then hand off control to the View.
+// 
 Article.fetchAll = () => {
   // REVIEW: What is this 'if' statement checking for? Where was the rawData set to local storage?
   if (localStorage.rawData) {
-
-    Article.loadAll();
+    
+    Article.loadAll(JSON.parse(localStorage.rawData)); //get out of local data and parse
+    articleView.initIndexPage();
 
   } else {
+    $.getJSON('../data/hackerIpsum.json')
+      .then((data) => {
 
+        localStorage.setItem('rawData', JSON.stringify(data));
+        Article.loadAll(data)
+        articleView.initIndexPage();
+
+      })
+      .fail((error) => {
+        console.log(error);
+      });
+  }
 }
+Article.fetchAll();
