@@ -12,6 +12,19 @@ function Article (rawDataObj) {
 // REVIEW: Instead of a global `articles = []` array, let's attach this list of all articles directly to the constructor function. Note: it is NOT on the prototype. In JavaScript, functions are themselves objects, which means we can add properties/values to them at any time. In this case, the array relates to ALL of the Article objects, so it does not belong on the prototype, as that would only be relevant to a single instantiated Article.
 Article.all = [];
 
+// Adding function for getting json data
+Article.getData = function() {
+  return $.getJSON('./data/hackerIpsum.json')
+    .then((data) => {
+      localStorage.setItem('rawData', JSON.stringify(data));
+      Article.loadAll(JSON.parse(localStorage.getItem('rawData')));
+      articleView.initIndexPage();
+    })
+    .fail((error) => {
+      console.error(error);
+    });
+}
+
 // COMMENT: Why isn't this method written as an arrow function?
 // Because it is using contextual 'this' and an arrow function would apply that to the window object.
 Article.prototype.toHtml = function() {
@@ -40,25 +53,26 @@ Article.loadAll = articleData => {
   articleData.forEach(articleObject => Article.all.push(new Article(articleObject)))
 }
 
+
+
+
+
+
 // REVIEW: This function will retrieve the data from either a local or remote source, and process it, then hand off control to the View.
 Article.fetchAll = () => {
   // REVIEW: What is this 'if' statement checking for? Where was the rawData set to local storage?
+  let articleCache;
   if (localStorage.rawData) {
-    let articleData = JSON.parse(localStorage.getItem('rawData'));
-    Article.loadAll(articleData);
+    if (articleCache != $.ajax({url:'./data/hackerIpsum.json', method: 'HEAD', cache: true})) {
+      localStorage.clear();
+      Article.getData();
+    } else {
+      let articleData = JSON.parse(localStorage.getItem('rawData'));
+      Article.loadAll(articleData);
+    }
 
   } else {
-    $.ajax({
-      url: '../data/hackerIpsum.json',
-      method: 'GET',
-      success: (data) => {return data},
-      error: (error) => {return error},
-    })
-      .then((data) => {
-        localStorage.setItem('rawData', JSON.stringify(data));
-      })
-      .fail((error) => {
-        console.error(error);
-      });    
+    articleCache = $.ajax({url:'./data/hackerIpsum.json', method: 'HEAD', cache: true});
+    Article.getData();
   }
 }
