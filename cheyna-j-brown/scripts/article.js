@@ -44,13 +44,15 @@ Article.fetchAll = () => {
   } else {
     $.getJSON('../data/hackerIpsum.json')
       .then((data) => {
+
         localStorage.setItem('rawData', JSON.stringify(data));
         Article.loadAll(data)
         articleView.initIndexPage();
+
       })
       .fail((error) => {
         console.log(error);
       });
   }
-  
+
 Article.fetchAll();
