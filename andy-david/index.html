@@ -48,12 +48,12 @@
         <div>
           <ul id="filters">
             <li>
-              <select id="author-filter">
+              <label for="author-filter"></label><select id="author-filter">
                 <option value="">-- Filter by Authors --</option>
               </select>
             </li>
             <li>
-              <select id="category-filter">
+              <label for="category-filter"></label><select id="category-filter">
                 <option value="">-- Filter by Categories --</option>
               </select>
             </li>
@@ -83,5 +83,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js"></script>
     <script src="scripts/article.js"></script>
     <script src="scripts/articleView.js"></script>
+    <!--TODone This initializes the page using the fetchAll function. It replaces ready I guess. fetchAll will either
+     load the article data from local storage if it exists, otherwise it will make a web request to our local json
+     data file -->
+    <script>Article.fetchAll()</script>
   </body>
 </html>
