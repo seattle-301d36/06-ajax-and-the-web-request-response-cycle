@@ -2,6 +2,9 @@
 
 const articleView = {};
 
+// --------------------------------------------
+// Filters
+// --------------------------------------------
 articleView.populateFilters = () => {
   $('article').each(function() {
     if (!$(this).hasClass('template')) {
@@ -47,6 +50,9 @@ articleView.handleCategoryFilter = () => {
   });
 };
 
+// --------------------------------------------
+// Nav
+// --------------------------------------------
 articleView.handleMainNav = () => {
   $('nav').on('click', '.tab', function(e) {
     e.preventDefault();
@@ -57,6 +63,9 @@ articleView.handleMainNav = () => {
   $('nav .tab:first').click();
 };
 
+// --------------------------------------------
+// Teasers
+// --------------------------------------------
 articleView.setTeasers = () => {
   $('.article-body *:nth-of-type(n+2)').hide();
   $('article').on('click', 'a.read-on', function(e) {
@@ -74,6 +83,9 @@ articleView.setTeasers = () => {
   });
 };
 
+// --------------------------------------------
+// Initialize Pages
+// --------------------------------------------
 articleView.initNewArticlePage = () => {
   $('.tab-content').show();
   $('#export-field').hide();
@@ -82,30 +94,8 @@ articleView.initNewArticlePage = () => {
   });
 
   $('#new-form').on('change', 'input, textarea', articleView.create);
+  $('#new-form').on('submit', articleView.submit);
 };
-
-articleView.create = () => {
-  let article;
-  $('#articles').empty();
-
-  article = new Article({
-    title: $('#article-title').val(),
-    author: $('#article-author').val(),
-    authorUrl: $('#article-author-url').val(),
-    category: $('#article-category').val(),
-    body: $('#article-body').val(),
-    publishedOn: $('#article-published:checked').length ? new Date() : null
-  });
-
-  $('#articles').append(article.toHtml());
-  $('pre code').each(function(i, block) {
-    hljs.highlightBlock(block);
-  });
-
-  $('#export-field').show();
-  $('#article-json').val(`${JSON.stringify(article)},`);
-};
-
 
 articleView.initIndexPage = () => {
   Article.all.forEach(article => {

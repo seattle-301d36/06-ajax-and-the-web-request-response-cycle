@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="styles/modules.css">
     <link rel="icon" type="image/x-icon" href="https://avatars2.githubusercontent.com/u/18607604?v=3&s=200">
 
+    <!-- Handlebars Template -->
     <script id="article-template" type="text/x-handlebars-template">
       <article class="clearfix" data-author="{{author}}" data-category="{{category}}">
         <header>
@@ -25,7 +26,9 @@
       </article>
     </script>
   </head>
+
   <body>
+    <!-- Header -->
     <header class="clearfix">
       <section class="heading-group-h1">
         <h1>
@@ -43,7 +46,9 @@
         </ul>
       </nav>
     </header>
+
     <main>
+      <!-- Arictles -->
       <section id="articles" class="tab-content">
         <div>
           <ul id="filters">
@@ -60,6 +65,8 @@
           </ul>
         </div>
       </section>
+      
+      <!-- About Us -->
       <section id="about" class="tab-content">
         <header>
           Welcome to my Blog
@@ -74,14 +81,22 @@
         </section>
       </section>
     </main>
+
+    <!-- Footer -->
     <footer>
       &copy; 2018 Code Fellows | Static Blog | Happy Ipsum!
     </footer>
 
+    <!-- External Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js"></script>
     <script src="scripts/article.js"></script>
     <script src="scripts/articleView.js"></script>
+
+    <!-- Load Articles -->
+    <script>
+      Article.fetchAll(articleView.initIndexPage);
+    </script>
   </body>
 </html>
